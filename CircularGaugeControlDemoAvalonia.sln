@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CircularGaugeControlDemoAvalonia", "CircularGaugeControlDemoAvalonia\CircularGaugeControlDemoAvalonia.csproj", "{E07109C8-ADFE-49A0-A59F-B0691A733369}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CircularGaugeControlDemoAvalonia.Desktop", "CircularGaugeControlDemoAvalonia.Desktop\CircularGaugeControlDemoAvalonia.Desktop.csproj", "{199A9CDE-0373-431D-A824-BAEAD6816091}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CircularGaugeControl", "CircularGaugeControl\CircularGaugeControl.csproj", "{BA81AF1B-6AF0-4320-90F6-5CB308C2BB07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E07109C8-ADFE-49A0-A59F-B0691A733369}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E07109C8-ADFE-49A0-A59F-B0691A733369}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E07109C8-ADFE-49A0-A59F-B0691A733369}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E07109C8-ADFE-49A0-A59F-B0691A733369}.Release|Any CPU.Build.0 = Release|Any CPU
+		{199A9CDE-0373-431D-A824-BAEAD6816091}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{199A9CDE-0373-431D-A824-BAEAD6816091}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{199A9CDE-0373-431D-A824-BAEAD6816091}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{199A9CDE-0373-431D-A824-BAEAD6816091}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA81AF1B-6AF0-4320-90F6-5CB308C2BB07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA81AF1B-6AF0-4320-90F6-5CB308C2BB07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA81AF1B-6AF0-4320-90F6-5CB308C2BB07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA81AF1B-6AF0-4320-90F6-5CB308C2BB07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3834EA3B-CB33-4BA5-9763-7574C408350B}
+	EndGlobalSection
+EndGlobal

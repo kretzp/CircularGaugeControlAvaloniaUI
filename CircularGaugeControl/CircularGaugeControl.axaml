@@ -1,0 +1,160 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="using:CircularGaugeControl">
+	<Design.PreviewWith>
+		<controls:CircularGaugeControl />
+	</Design.PreviewWith>
+
+	<Style Selector="controls|CircularGaugeControl">
+		<Setter Property="ResetPointerOnStartUp" Value="True" />
+		<Setter Property="ScaleValuePrecision" Value="5" />
+		<Setter Property="BorderBrush">
+			<Setter.Value>
+				<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+					<LinearGradientBrush.GradientStops>
+						<GradientStop Color="#FFA3AFD6" Offset="0.321"/>
+						<GradientStop Color="#FF718597" Offset="0.375"/>
+						<GradientStop Color="#FF8399A9" Offset="0.674"/>
+						<GradientStop Color="#FF617584" Offset="1"/>
+					</LinearGradientBrush.GradientStops>
+				</LinearGradientBrush>
+			</Setter.Value>
+		</Setter>
+		<Setter Property="RangeIndicatorThickness" Value="5"/>
+		<Setter Property="GaugeBackgroundColor" Value="Black" />
+		<Setter Property="BelowOptimalRangeColor" Value="Orange" />
+		<Setter Property="OptimalRangeColor" Value="Green" />
+		<Setter Property="AboveOptimalRangeColor" Value="Red" />
+		<Setter Property="DialTextColor" Value="White" />
+		<Setter Property="DialTextFontSize" Value="10" />
+		<!-- Set Defaults -->
+		<Setter Property="Template">
+			<ControlTemplate>
+				<!-- Root Grid-->
+				<Grid x:Name="PART_LayoutRoot"
+					  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}"
+					  Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}" >
+
+
+					<Ellipse x:Name="OuterFrame" StrokeThickness="16"
+							 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}"
+							 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}"
+							 Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=GaugeBackgroundColor, Converter={StaticResource backgroundColorConverter}}">
+
+						<Ellipse.Stroke>
+							<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FF5F5C5C" Offset="0"/>
+									<GradientStop Color="#FFEEDEDE" Offset="0.35"/>
+									<GradientStop Color="#FFA09595" Offset="0.705"/>
+									<GradientStop Color="#FF636060" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Ellipse.Stroke>
+					</Ellipse>
+
+
+					<!-- Gauge Image -->
+					<Image Source="{TemplateBinding ImageSource}"
+						   Width="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=ImageSize, Converter={StaticResource sizeConverter}, ConverterParameter=Width }"
+                               
+						   Height="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=ImageSize, Converter={StaticResource sizeConverter}, ConverterParameter=Height }"
+                               
+						   RenderTransform="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=ImageOffset, Converter={StaticResource imageOffsetConverter}}">
+
+					</Image>
+
+					<!-- Dial Text -->
+					<TextBlock Text="{TemplateBinding DialText}"
+							   HorizontalAlignment="Center" VerticalAlignment="Center"
+							   Foreground="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=DialTextColor, Converter={StaticResource colorToSolidColorBrushConverter}}"
+							   FontSize="{TemplateBinding DialTextFontSize}"
+							   FontWeight="Bold"
+                                                         
+						  RenderTransform="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=DialTextOffset, Converter={StaticResource rangeIndicatorLightPositionConverter}}">
+
+					</TextBlock>
+
+					<!-- Pointer -->
+					<Path x:Name="PART_Pointer" Stroke="#FFE91C1C" StrokeThickness="2"
+						  Width="{TemplateBinding PointerLength}"
+						  Height="{TemplateBinding PointerThickness}" HorizontalAlignment="Center"
+						  Data="M1,1 L1,10 L156,6 z" Stretch="Fill"  RenderTransformOrigin="0%,50%"
+						  RenderTransform="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                            Path=PointerLength, Converter={StaticResource pointerCenterConverter}}">
+						<Path.Fill>
+							<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FF890A0A" Offset="0.197"/>
+									<GradientStop Color="#FFE32323" Offset="0.61"/>
+									<GradientStop Color="#FFC40808" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Path.Fill>
+
+					</Path>
+
+
+					<!--Pointer Cap-->
+					<Ellipse x:Name="PART_PointerCap" Height="{TemplateBinding PointerCapRadius}" Width="{TemplateBinding PointerCapRadius}" StrokeThickness="4" Opacity="1" >
+						<Ellipse.Stroke>
+							<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FFC1B5B5" Offset="0.031"/>
+									<GradientStop Color="#FF000000" Offset="0.675"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Ellipse.Stroke>
+						<Ellipse.Fill>
+							<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#FF140204" Offset="0.342"/>
+									<GradientStop Color="#FF152029" Offset="0.846"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Ellipse.Fill>
+					</Ellipse>
+
+					<!--Range indicator light-->
+					<Ellipse Name="PART_RangeIndicatorLight"
+							  Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=RangeIndicatorLightRadius, Converter={StaticResource radiusToDiameterConverter}}"
+							  Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=RangeIndicatorLightRadius, Converter={StaticResource radiusToDiameterConverter}}"
+                                
+							RenderTransform="{Binding RelativeSource={RelativeSource TemplatedParent}, 
+                                Path=RangeIndicatorLightOffset, Converter={StaticResource rangeIndicatorLightPositionConverter}}">
+						<!--Range indicator light off position effect-->
+						<Ellipse.Fill>
+							<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="LightGray" Offset="0.2" />
+									<GradientStop Color="Gray" Offset="0.5" />
+									<GradientStop Color="Black" Offset="0.8" />
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Ellipse.Fill>
+					</Ellipse>
+
+					<!--Glass effect ellipse-->
+					<Path x:Name="GlassEffect" StrokeThickness="1" Stretch="Fill" VerticalAlignment="Bottom"
+						  Height="{TemplateBinding Radius}"
+						  Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource glassEffectWidthConverter}}"
+						  Opacity="0.18" Data="M265.99997,151.00005 C263.99994,194.00003 209.55908,259 135.00064,259 C60.442207,259 11,200.00003 5.9999995,157.00005 C5.0181994,148.55656 73.000877,112.00006 137.00053,112.00007 C199.00887,112.00008 266.72015,135.5164 265.99997,151.00005 z">
+						<Path.Fill>
+							<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+								<LinearGradientBrush.GradientStops>
+									<GradientStop Color="#68FCFCFC"/>
+									<GradientStop Color="#FFF8FCF8" Offset="1"/>
+								</LinearGradientBrush.GradientStops>
+							</LinearGradientBrush>
+						</Path.Fill>
+					</Path>
+				</Grid>
+			</ControlTemplate>
+		</Setter>
+	</Style>
+</Styles>

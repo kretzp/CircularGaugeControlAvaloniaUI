@@ -1,0 +1,196 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:CircularGaugeControl.ViewModels"
+			 xmlns:gauge="clr-namespace:CircularGaugeControl;assembly=CircularGaugeControl"
+             mc:Ignorable="d" d:DesignWidth="700" d:DesignHeight="700"
+			 Height="700" Width="700"
+             x:Class="CircularGaugeControl.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainViewModel />
+  </Design.DataContext>
+	<Grid x:Name="LayoutRoot" >
+		<Grid.Background>
+			<LinearGradientBrush EndPoint="50%,100%" StartPoint="50%,0%">
+				<LinearGradientBrush.GradientStops>
+				    <GradientStop Color="#FFFFFFFF" Offset="0"/>
+				    <GradientStop Color="#FF552322" Offset="1"/>
+				</LinearGradientBrush.GradientStops>
+			</LinearGradientBrush>
+		</Grid.Background>
+		<Grid >
+			<Grid.RowDefinitions>
+				<RowDefinition Height="330" />
+				<RowDefinition Height="330"/>
+			</Grid.RowDefinitions>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="330" />
+				<ColumnDefinition Width="330"/>
+			</Grid.ColumnDefinitions>
+
+
+			<!--Black Gauge -->
+			<gauge:CircularGaugeControl x:Name="myGauge1" Grid.Column="0" Grid.Row="0"
+                                        Radius="150"
+                                        ScaleRadius="110"
+                                        ScaleStartAngle="120"
+                                        ScaleSweepAngle="300"
+                                        PointerLength="85"
+                                        PointerCapRadius="35"
+                                        MinValue="0"
+                                        MaxValue="1000"
+                                        MajorDivisionsCount="10"
+                                        MinorDivisionsCount="5"
+                                        CurrentValue="{Binding Score}"
+                                        ImageSource="/Assets/windowsLogo.png"
+                                        ImageSize="40,50"
+                                        RangeIndicatorThickness="8"
+                                        RangeIndicatorRadius="120"
+                                        RangeIndicatorLightRadius="10"
+                                        RangeIndicatorLightOffset="80"
+                                        ScaleLabelRadius="90"
+                                        ScaleLabelSize="40,20"
+                                        ScaleLabelFontSize="10"
+                                        ScaleLabelForeground="LightGray"
+                                        MajorTickSize="10,3"
+                                        MinorTickSize="3,1"
+                                        MajorTickColor="LightGray"
+                                        MinorTickColor="LightGray"
+                                        ImageOffset="-50"
+                                        GaugeBackgroundColor="Black"
+                                        PointerThickness ="16"
+                                        OptimalRangeStartValue="300"
+                                        OptimalRangeEndValue="700"
+                                        DialTextOffset="40"
+                                        DialText="Black"
+                                        DialTextColor="Black"
+										EasingValue="QuadraticEaseIn"
+                                        >
+
+			</gauge:CircularGaugeControl>
+
+			<!--Blue Gauge -->
+			<gauge:CircularGaugeControl x:Name="myGauge2"  Grid.Column="1" Grid.Row="0"
+                                        Radius="150"
+                                        ScaleRadius="100"
+                                        ScaleStartAngle="140"
+                                        ScaleSweepAngle="270"
+                                        PointerLength="90"
+                                        PointerCapRadius="35"
+                                        MinValue="0"
+                                        MaxValue="1"
+                                        MajorDivisionsCount="10"
+                                        MinorDivisionsCount="5"
+                                        OptimalRangeEndValue="0.8"
+                                        OptimalRangeStartValue="0.5"
+                                        CurrentValue="{Binding Score}"
+                                        ImageSource="/Assets/windowsLogo.png"
+                                        ImageSize="40,50"
+                                        RangeIndicatorThickness="9"
+                                        RangeIndicatorRadius="80"
+                                        RangeIndicatorLightRadius="10"
+                                        RangeIndicatorLightOffset="80"
+                                        ScaleLabelRadius="115"
+                                        ScaleLabelSize="40,20"
+                                        ScaleLabelFontSize="10"
+                                        ScaleLabelForeground="White"
+                                        MajorTickSize="10,3"
+                                        MinorTickSize="3,1"
+                                        MajorTickColor="White"
+                                        MinorTickColor="LightGray"
+                                        ImageOffset="-50"
+                                        GaugeBackgroundColor="CornflowerBlue"
+                                        PointerThickness ="5"
+                                        DialTextOffset="40"
+                                        DialText="Aqua Blue"
+                                        DialTextColor="DarkBlue"
+                                        EasingValue="ExponentialEaseOut"
+                                        />
+
+
+			<!--Red Gauge -->
+			<gauge:CircularGaugeControl x:Name="myGauge3" Grid.Column="0" Grid.Row="1"
+                                        Radius="150"
+                                        ScaleRadius="90"
+                                        ScaleStartAngle="120"
+                                        ScaleSweepAngle="300"
+                                        PointerLength="80"
+                                        PointerCapRadius="45"
+                                        MinValue="-50"
+                                        MaxValue="50"
+                                        MajorDivisionsCount="10"
+                                        MinorDivisionsCount="5"
+                                        OptimalRangeStartValue="-10"
+                                        OptimalRangeEndValue="30"
+                                        CurrentValue="{Binding Score}"
+                                        ImageSource="/Assets/windowsLogo.png"
+                                        ImageSize="40,50"
+                                        RangeIndicatorThickness="0"
+                                        RangeIndicatorRadius="0"
+                                        RangeIndicatorLightRadius="10"
+                                        RangeIndicatorLightOffset="80"
+                                        ScaleLabelRadius="110"
+                                        ScaleLabelSize="40,20"
+                                        ScaleLabelFontSize="10"
+                                        ScaleLabelForeground="White"
+                                        MajorTickSize="13,3"
+                                        MinorTickSize="5,1"
+                                        MajorTickColor="White"
+                                        MinorTickColor="LightGray"
+                                        ImageOffset="-50"
+                                        GaugeBackgroundColor="DarkRed"
+                                        PointerThickness ="20"
+                                        DialTextOffset="40"
+                                        DialText="Dark Red"
+                                        DialTextColor="DarkRed"
+										EasingValue="QuinticEaseInOut"
+                                        />
+
+			<!--DarkSlateGray gauge-->
+			<gauge:CircularGaugeControl x:Name="myGauge4" Grid.Column="1" Grid.Row="1"
+                                        Radius="150"
+                                        ScaleRadius="110"
+                                        ScaleStartAngle="120"
+                                        ResetPointerOnStartUp="True"
+                                        ScaleSweepAngle="300"
+                                        PointerLength="85"
+                                        PointerCapRadius="35"
+                                        MinValue="0"
+                                        MaxValue="1000"
+                                        MajorDivisionsCount="10"
+                                        MinorDivisionsCount="5"
+                                        CurrentValue="{Binding Score}"
+                                        ImageSource="/Assets/windowsLogo.png"
+                                        ImageSize="40,50"
+                                        RangeIndicatorThickness="0"
+                                        RangeIndicatorRadius="0"
+                                        ScaleLabelRadius="90"
+                                        ScaleLabelSize="40,20"
+                                        ScaleLabelFontSize="11"
+                                        ScaleLabelForeground="Black"
+                                        MajorTickSize="10,3"
+                                        MinorTickSize="3,1"
+                                        MajorTickColor="DarkGray"
+                                        MinorTickColor="DarkGray"
+                                        ImageOffset="-50"
+                                        GaugeBackgroundColor="DarkSlateGray"
+                                        PointerThickness ="12"
+                                        OptimalRangeStartValue="300"
+                                        OptimalRangeEndValue="700"
+                                        DialTextOffset="40"
+                                        DialText="Slate Gray"
+                                        DialTextColor="DarkSlateGray"
+										EasingValue="LinearEasing"
+                                        >
+
+
+			</gauge:CircularGaugeControl>
+
+
+		</Grid>
+	</Grid>
+</UserControl>
