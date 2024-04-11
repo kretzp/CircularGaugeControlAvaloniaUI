@@ -25,13 +25,10 @@ DAMAGE.*/
 using Avalonia.Controls.Metadata;
 using Avalonia.Controls.Shapes;
 using Avalonia.Controls;
-using Avalonia.Data.Core;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Path = Avalonia.Controls.Shapes.Path;
 using Avalonia;
-using Avalonia.Interactivity;
-using System.ComponentModel;
 using Avalonia.Controls.Primitives;
 using Avalonia.Animation;
 using System;
@@ -43,28 +40,34 @@ namespace CircularGaugeControl
     /// <summary>
     /// Represents a Circular Gauge control
     /// </summary>
-    [TemplatePart(Name = "LayoutRoot", Type = typeof(Grid))]
-    [TemplatePart(Name = "Pointer", Type = typeof(Path))]
-    [TemplatePart(Name = "RangeIndicatorLight", Type = typeof(Ellipse))]
-    [TemplatePart(Name = "PointerCap", Type = typeof(Ellipse))]
+    [TemplatePart(Name = "PART_LayoutRoot", Type = typeof(Grid))]
+    [TemplatePart(Name = "PART_Pointer", Type = typeof(Path))]
+    [TemplatePart(Name = "PART_RangeIndicatorLight", Type = typeof(Ellipse))]
+    [TemplatePart(Name = "PART_PointerCap", Type = typeof(Ellipse))]
     public class CircularGaugeControl : TemplatedControl
     {
         #region Private variables
 
         //Private variables
-        private Grid rootGrid;
-        private Path rangeIndicator;
-        private Path pointer;
-        private Ellipse pointerCap;
-        private Ellipse lightIndicator;
+        private Grid? rootGrid;
+        private Path? rangeIndicator;
+        private Path? pointer;
+        private Ellipse? pointerCap;
+        private Ellipse? lightIndicator;
         private bool isInitialValueSet = false;
         private double arcradius1;
         private double arcradius2;
-        private int animatingSpeedFactor = 6;
+        private readonly int animatingSpeedFactor = 6;
 
         #endregion
 
         #region Dependency properties
+
+        /// <summary>
+        /// Dependency property to Get/Set the OuterFrameStrokeThickness 
+        /// </summary>
+        public static readonly StyledProperty<double> OuterFrameStrokeThicknessProperty =
+            AvaloniaProperty.Register<CircularGaugeControl, double>(nameof(OuterFrameStrokeThickness), 16);
 
         /// <summary>
         /// Dependency property to Get/Set the Easing 
@@ -312,6 +315,15 @@ namespace CircularGaugeControl
         #endregion
 
         #region Wrapper properties
+
+        /// <summary>
+        /// Gets/Sets the StrokeThickness of the OuterFrame
+        /// </summary>
+        public double OuterFrameStrokeThickness
+        {
+            get => GetValue(OuterFrameStrokeThicknessProperty);
+            set => SetValue(OuterFrameStrokeThicknessProperty, value);
+        }
 
         /// <summary>
         /// Gets/Sets the Easing value
@@ -681,6 +693,7 @@ namespace CircularGaugeControl
 
         private static void OnOptimalRangeEndValuePropertyChanged(CircularGaugeControl gauge, AvaloniaPropertyChangedEventArgs e)
         {
+            if (e.NewValue == null) return;
             if ((double)e.NewValue > gauge.MaxValue)
             {
                 gauge.OptimalRangeEndValue = gauge.MaxValue;
@@ -689,6 +702,7 @@ namespace CircularGaugeControl
         }
         private static void OnOptimalRangeStartValuePropertyChanged(CircularGaugeControl gauge, AvaloniaPropertyChangedEventArgs e)
         {
+            if (e.NewValue == null) return;
             if ((double)e.NewValue < gauge.MinValue)
             {
                 gauge.OptimalRangeStartValue = gauge.MinValue;
@@ -697,34 +711,38 @@ namespace CircularGaugeControl
 
         public virtual void OnCurrentValueChanged(AvaloniaPropertyChangedEventArgs e)
         {
+            if (e.NewValue == null) return;
+            if (e.OldValue == null) return;
             //Validate and set the new value
             double newValue = (double)e.NewValue;
             double oldValue = (double)e.OldValue;
+            AnimatePointerFromValues(newValue, oldValue);
 
-            if (newValue > this.MaxValue)
+        }
+
+        private void AnimatePointerFromValues(double newValue, double oldValue)
+        {
+            if (newValue > MaxValue)
             {
-                newValue = this.MaxValue;
+                newValue = MaxValue;
             }
-            else if (newValue < this.MinValue)
+            else if (newValue < MinValue)
             {
-                newValue = this.MinValue;
+                newValue = MinValue;
             }
 
-            if (oldValue > this.MaxValue)
+            if (oldValue > MaxValue)
             {
-                oldValue = this.MaxValue;
+                oldValue = MaxValue;
             }
-            else if (oldValue < this.MinValue)
+            else if (oldValue < MinValue)
             {
-                oldValue = this.MinValue;
+                oldValue = MinValue;
             }
 
             if (pointer != null)
             {
-                double db1 = 0;
-                double oldcurr_realworldunit = 0;
-                double newcurr_realworldunit = 0;
-                double realworldunit = (ScaleSweepAngle / (MaxValue - MinValue));
+                double realworldunit = ScaleSweepAngle / (MaxValue - MinValue);
                 //Resetting the old value to min value the very first time.
                 if (oldValue == 0 && !isInitialValueSet)
                 {
@@ -732,35 +750,18 @@ namespace CircularGaugeControl
                     isInitialValueSet = true;
 
                 }
-                if (oldValue < 0)
-                {
-                    db1 = MinValue + Math.Abs(oldValue);
-                    oldcurr_realworldunit = ((double)(Math.Abs(db1 * realworldunit)));
-                }
-                else
-                {
-                    db1 = Math.Abs(MinValue) + oldValue;
-                    oldcurr_realworldunit = ((double)(db1 * realworldunit));
-                }
-                if (newValue < 0)
-                {
-                    db1 = MinValue + Math.Abs(newValue);
-                    newcurr_realworldunit = ((double)(Math.Abs(db1 * realworldunit)));
-                }
-                else
-                {
-                    db1 = Math.Abs(MinValue) + newValue;
-                    newcurr_realworldunit = ((double)(db1 * realworldunit));
-                }
+                double db = oldValue - MinValue;
+                double oldcurr_realworldunit = db * realworldunit;
 
-                double oldcurrentvalueAngle = (ScaleStartAngle + oldcurr_realworldunit);
-                double newcurrentvalueAngle = (ScaleStartAngle + newcurr_realworldunit);
+                db = newValue - MinValue;
+                double newcurr_realworldunit = db * realworldunit;
+
+                double oldcurrentvalueAngle = ScaleStartAngle + oldcurr_realworldunit;
+                double newcurrentvalueAngle = ScaleStartAngle + newcurr_realworldunit;
 
                 //Animate the pointer from the old value to the new value
                 AnimatePointer(oldcurrentvalueAngle, newcurrentvalueAngle);
-
             }
-
         }
 
         /// <summary>
@@ -811,6 +812,8 @@ namespace CircularGaugeControl
             }
         }
 
+
+
         /// <summary>
         /// Move pointer without animating
         /// </summary>
@@ -819,11 +822,15 @@ namespace CircularGaugeControl
         {
             if (pointer != null)
             {
-                TransformGroup tg = pointer.RenderTransform as TransformGroup;
-                RotateTransform rt = tg.Children[0] as RotateTransform;
-                rt.Angle = angleValue;
+                if (pointer.RenderTransform is TransformGroup tg)
+                {
+                    if (tg.Children[0] is RotateTransform rt)
+                    {
+                        rt.Angle = angleValue;
+                    }
 
-                Animation_Completed();
+                    Animation_Completed();
+                }
             }
         }
 
@@ -834,21 +841,23 @@ namespace CircularGaugeControl
         /// <param name="e"></param>
         void Animation_Completed()
         {
-            if (this.CurrentValue > OptimalRangeEndValue)
+            if (lightIndicator != null)
             {
-                lightIndicator.Fill = GetRangeIndicatorGradEffect(AboveOptimalRangeColor);
+                if (this.CurrentValue > OptimalRangeEndValue)
+                {
+                    lightIndicator.Fill = GetRangeIndicatorGradEffect(AboveOptimalRangeColor);
 
-            }
-            else if (this.CurrentValue <= OptimalRangeEndValue && this.CurrentValue >= OptimalRangeStartValue)
-            {
-                lightIndicator.Fill = GetRangeIndicatorGradEffect(OptimalRangeColor);
+                }
+                else if (this.CurrentValue <= OptimalRangeEndValue && this.CurrentValue >= OptimalRangeStartValue)
+                {
+                    lightIndicator.Fill = GetRangeIndicatorGradEffect(OptimalRangeColor);
 
+                }
+                else if (this.CurrentValue < OptimalRangeStartValue)
+                {
+                    lightIndicator.Fill = GetRangeIndicatorGradEffect(BelowOptimalRangeColor);
+                }
             }
-            else if (this.CurrentValue < OptimalRangeStartValue)
-            {
-                lightIndicator.Fill = GetRangeIndicatorGradEffect(BelowOptimalRangeColor);
-            }
-
         }
 
         /// <summary>
@@ -856,27 +865,37 @@ namespace CircularGaugeControl
         /// </summary>
         /// <param name="gradientColor"></param>
         /// <returns></returns>
-        private GradientBrush GetRangeIndicatorGradEffect(Color gradientColor)
+        private static LinearGradientBrush GetRangeIndicatorGradEffect(Color gradientColor)
         {
 
-            LinearGradientBrush gradient = new LinearGradientBrush();
-            gradient.StartPoint = new RelativePoint(new Point(0, 0), RelativeUnit.Relative);
-            gradient.EndPoint = new RelativePoint(new Point(1, 1), RelativeUnit.Relative);
-            GradientStop color1 = new GradientStop();
+            var gradient = new LinearGradientBrush
+            {
+                StartPoint = new RelativePoint(new Point(0, 0), RelativeUnit.Relative),
+                EndPoint = new RelativePoint(new Point(1, 1), RelativeUnit.Relative)
+            };
+            var color1 = new GradientStop();
             if (gradientColor == Colors.Transparent)
             {
                 color1.Color = gradientColor;
             }
             else
+            {
                 color1.Color = Colors.LightGray;
+            }
 
             color1.Offset = 0.2;
             gradient.GradientStops.Add(color1);
-            GradientStop color2 = new GradientStop();
-            color2.Color = gradientColor; color2.Offset = 0.5;
+            var color2 = new GradientStop
+            {
+                Color = gradientColor,
+                Offset = 0.5
+            };
             gradient.GradientStops.Add(color2);
-            GradientStop color3 = new GradientStop();
-            color3.Color = gradientColor; color3.Offset = 0.8;
+            var color3 = new GradientStop
+            {
+                Color = gradientColor,
+                Offset = 0.8
+            };
             gradient.GradientStops.Add(color3);
             return gradient;
         }
@@ -897,13 +916,17 @@ namespace CircularGaugeControl
 
             //Set Zindex of pointer and pointer cap to a really high number so that it stays on top of the 
             //scale and the range indicator
-            pointer.SetValue(Canvas.ZIndexProperty, 100000);
-            pointerCap.SetValue(Canvas.ZIndexProperty, 100000);
+            pointer?.SetValue(ZIndexProperty, 100000);
+            pointerCap?.SetValue(ZIndexProperty, 100000);
 
             if (ResetPointerOnStartUp)
             {
                 //Reset Pointer
                 MovePointer(ScaleStartAngle);
+            }
+            else
+            {
+                AnimatePointerFromValues(CurrentValue, 0);
             }
         }
 
@@ -914,9 +937,6 @@ namespace CircularGaugeControl
             //Calculate one major tick angle 
             double majorTickUnitAngle = ScaleSweepAngle / MajorDivisionsCount;
 
-            //Obtaining One minor tick angle 
-            double minorTickUnitAngle = ScaleSweepAngle / MinorDivisionsCount;
-
             //Obtaining One major ticks value
             double majorTicksUnitValue = (MaxValue - MinValue) / MajorDivisionsCount;
             majorTicksUnitValue = Math.Round(majorTicksUnitValue, ScaleValuePrecision);
@@ -924,48 +944,54 @@ namespace CircularGaugeControl
             double minvalue = MinValue; ;
 
             // Drawing Major scale ticks
-            for (double i = ScaleStartAngle; i <= (ScaleStartAngle + ScaleSweepAngle); i = i + majorTickUnitAngle)
+            for (double i = ScaleStartAngle; i <= (ScaleStartAngle + ScaleSweepAngle); i += majorTickUnitAngle)
             {
 
                 //Majortick is drawn as a rectangle 
-                Rectangle majortickrect = new Rectangle();
-                majortickrect.Height = MajorTickSize.Height;
-                majortickrect.Width = MajorTickSize.Width;
-                majortickrect.Fill = new SolidColorBrush(MajorTickColor);
-                majortickrect.RenderTransformOrigin = new RelativePoint(new Point(0.5, 0.5), RelativeUnit.Relative);
-                majortickrect.HorizontalAlignment = HorizontalAlignment.Center;
-                majortickrect.VerticalAlignment = VerticalAlignment.Center;
+                var majortickrect = new Rectangle
+                {
+                    Height = MajorTickSize.Height,
+                    Width = MajorTickSize.Width,
+                    Fill = new SolidColorBrush(MajorTickColor),
+                    RenderTransformOrigin = new RelativePoint(new Point(0.5, 0.5), RelativeUnit.Relative),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                };
 
-                TransformGroup majortickgp = new TransformGroup();
-                RotateTransform majortickrt = new RotateTransform();
+                var majortickgp = new TransformGroup();
+                var majortickrt = new RotateTransform();
 
                 //Obtaining the angle in radians for calulating the points
-                double i_radian = (i * Math.PI) / 180;
+                double i_radian = i * Math.PI / 180;
                 majortickrt.Angle = i;
                 majortickgp.Children.Add(majortickrt);
-                TranslateTransform majorticktt = new TranslateTransform();
-
-                //Finding the point on the Scale where the major ticks are drawn
-                //here drawing the points with center as (0,0)
-                majorticktt.X = (int)((ScaleRadius) * Math.Cos(i_radian));
-                majorticktt.Y = (int)((ScaleRadius) * Math.Sin(i_radian));
+                var majorticktt = new TranslateTransform
+                {
+                    //Finding the point on the Scale where the major ticks are drawn
+                    //here drawing the points with center as (0,0)
+                    X = (int)(ScaleRadius * Math.Cos(i_radian)),
+                    Y = (int)(ScaleRadius * Math.Sin(i_radian))
+                };
 
                 //Points for the textblock which hold the scale value
-                TranslateTransform majorscalevaluett = new TranslateTransform();
-                //here drawing the points with center as (0,0)
-                majorscalevaluett.X = (int)((ScaleLabelRadius) * Math.Cos(i_radian));
-                majorscalevaluett.Y = (int)((ScaleLabelRadius) * Math.Sin(i_radian));
+                var majorscalevaluett = new TranslateTransform
+                {
+                    //here drawing the points with center as (0,0)
+                    X = (int)(ScaleLabelRadius * Math.Cos(i_radian)),
+                    Y = (int)(ScaleLabelRadius * Math.Sin(i_radian))
+                };
 
                 //Defining the properties of the scale value textbox
-                TextBlock tb = new TextBlock();
-
-                tb.Height = ScaleLabelSize.Height;
-                tb.Width = ScaleLabelSize.Width;
-                tb.FontSize = ScaleLabelFontSize;
-                tb.Foreground = new SolidColorBrush(ScaleLabelForeground);
-                tb.TextAlignment = TextAlignment.Center;
-                tb.VerticalAlignment = VerticalAlignment.Center;
-                tb.HorizontalAlignment = HorizontalAlignment.Center;
+                var tb = new TextBlock
+                {
+                    Height = ScaleLabelSize.Height,
+                    Width = ScaleLabelSize.Width,
+                    FontSize = ScaleLabelFontSize,
+                    Foreground = new SolidColorBrush(ScaleLabelForeground),
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
 
                 //Writing and appending the scale value
 
@@ -974,8 +1000,7 @@ namespace CircularGaugeControl
                 {
                     minvalue = Math.Round(minvalue, ScaleValuePrecision);
                     tb.Text = minvalue.ToString();
-                    minvalue = minvalue + majorTicksUnitValue;
-
+                    minvalue += majorTicksUnitValue;
                 }
                 else
                 {
@@ -984,48 +1009,47 @@ namespace CircularGaugeControl
                 majortickgp.Children.Add(majorticktt);
                 majortickrect.RenderTransform = majortickgp;
                 tb.RenderTransform = majorscalevaluett;
-                rootGrid.Children.Add(majortickrect);
-                rootGrid.Children.Add(tb);
-
+                rootGrid?.Children.Add(majortickrect);
+                rootGrid?.Children.Add(tb);
 
                 //Drawing the minor axis ticks
-                double onedegree = ((i + majorTickUnitAngle) - i) / (MinorDivisionsCount);
+                double onedegree = majorTickUnitAngle / MinorDivisionsCount;
 
                 if ((i < (ScaleStartAngle + ScaleSweepAngle)) && (Math.Round(minvalue, ScaleValuePrecision) <= Math.Round(MaxValue, ScaleValuePrecision)))
                 {
                     //Drawing the minor scale
-                    for (double mi = i + onedegree; mi < (i + majorTickUnitAngle); mi = mi + onedegree)
+                    for (double mi = i + onedegree; mi < (i + majorTickUnitAngle); mi += onedegree)
                     {
                         //here the minortick is drawn as a rectangle 
-                        Rectangle mr = new Rectangle();
-                        mr.Height = MinorTickSize.Height;
-                        mr.Width = MinorTickSize.Width;
-                        mr.Fill = new SolidColorBrush(MinorTickColor);
-                        mr.HorizontalAlignment = HorizontalAlignment.Center;
-                        mr.VerticalAlignment = VerticalAlignment.Center;
-                        mr.RenderTransformOrigin = new RelativePoint(new Point(0.5, 0.5), RelativeUnit.Relative);
+                        var mr = new Rectangle
+                        {
+                            Height = MinorTickSize.Height,
+                            Width = MinorTickSize.Width,
+                            Fill = new SolidColorBrush(MinorTickColor),
+                            HorizontalAlignment = HorizontalAlignment.Center,
+                            VerticalAlignment = VerticalAlignment.Center,
+                            RenderTransformOrigin = new RelativePoint(new Point(0.5, 0.5), RelativeUnit.Relative)
+                        };
 
-                        TransformGroup minortickgp = new TransformGroup();
-                        RotateTransform minortickrt = new RotateTransform();
-                        minortickrt.Angle = mi;
+                        var minortickgp = new TransformGroup();
+                        var minortickrt = new RotateTransform
+                        {
+                            Angle = mi
+                        };
                         minortickgp.Children.Add(minortickrt);
-                        TranslateTransform minorticktt = new TranslateTransform();
+                        var minorticktt = new TranslateTransform();
 
                         //Obtaining the angle in radians for calulating the points
-                        double mi_radian = (mi * Math.PI) / 180;
+                        double mi_radian = mi * Math.PI / 180;
                         //Finding the point on the Scale where the minor ticks are drawn
-                        minorticktt.X = (int)((ScaleRadius) * Math.Cos(mi_radian));
-                        minorticktt.Y = (int)((ScaleRadius) * Math.Sin(mi_radian));
+                        minorticktt.X = (int)(ScaleRadius * Math.Cos(mi_radian));
+                        minorticktt.Y = (int)(ScaleRadius * Math.Sin(mi_radian));
 
                         minortickgp.Children.Add(minorticktt);
                         mr.RenderTransform = minortickgp;
-                        rootGrid.Children.Add(mr);
-
-
+                        rootGrid?.Children.Add(mr);
                     }
-
                 }
-
             }
         }
 
@@ -1037,11 +1061,11 @@ namespace CircularGaugeControl
         /// <returns></returns>
         private Point GetCircumferencePoint(double angle, double radius)
         {
-            double angle_radian = (angle * Math.PI) / 180;
+            double angle_radian = angle * Math.PI / 180;
             //Radius-- is the Radius of the gauge
-            double X = (double)((Radius) + (radius) * Math.Cos(angle_radian));
-            double Y = (double)((Radius) + (radius) * Math.Sin(angle_radian));
-            Point p = new Point(X, Y);
+            double X = Radius + radius * Math.Cos(angle_radian);
+            double Y = Radius + radius * Math.Sin(angle_radian);
+            var p = new Point(X, Y);
             return p;
         }
 
@@ -1050,41 +1074,23 @@ namespace CircularGaugeControl
         /// </summary>
         private void DrawRangeIndicator()
         {
-            double realworldunit = (ScaleSweepAngle / (MaxValue - MinValue));
+            double realworldunit = ScaleSweepAngle / (MaxValue - MinValue);
             double optimalStartAngle;
             double optimalEndAngle;
             double db;
 
-            //Checking whether the  OptimalRangeStartvalue is -ve 
-            if (OptimalRangeStartValue < 0)
-            {
-                db = MinValue + Math.Abs(OptimalRangeStartValue);
-                optimalStartAngle = ((double)(Math.Abs(db * realworldunit)));
-            }
-            else
-            {
-                db = Math.Abs(MinValue) + OptimalRangeStartValue;
-                optimalStartAngle = ((double)(db * realworldunit));
-            }
+            db = OptimalRangeStartValue - MinValue;
+            optimalStartAngle = db * realworldunit;
 
-            //Checking whether the  OptimalRangeEndvalue is -ve
-            if (OptimalRangeEndValue < 0)
-            {
-                db = MinValue + Math.Abs(OptimalRangeEndValue);
-                optimalEndAngle = ((double)(Math.Abs(db * realworldunit)));
-            }
-            else
-            {
-                db = Math.Abs(MinValue) + OptimalRangeEndValue;
-                optimalEndAngle = ((double)(db * realworldunit));
-            }
+            db = OptimalRangeEndValue - MinValue;
+            optimalEndAngle = db * realworldunit;
             // calculating the angle for optimal Start value
 
-            double optimalStartAngleFromStart = (ScaleStartAngle + optimalStartAngle);
+            double optimalStartAngleFromStart = ScaleStartAngle + optimalStartAngle;
 
-            // calculating the angle for optimal Start value
+            // calculating the angle for optimal End value
 
-            double optimalEndAngleFromStart = (ScaleStartAngle + optimalEndAngle);
+            double optimalEndAngleFromStart = ScaleStartAngle + optimalEndAngle;
 
             //Calculating the Radius of the two arc for segment 
             arcradius1 = (RangeIndicatorRadius + RangeIndicatorThickness);
@@ -1127,33 +1133,34 @@ namespace CircularGaugeControl
         {
 
             // Segment Geometry
-            PathSegments segments = new PathSegments();
-
-            // First line segment from pt p1 - pt p2
-            segments.Add(new LineSegment() { Point = p2 });
-
-            //Arc drawn from pt p2 - pt p3 with the RangeIndicatorRadius 
-            segments.Add(new ArcSegment()
+            var segments = new PathSegments
             {
-                Size = new Size(arcradius2, arcradius2),
-                Point = p3,
-                SweepDirection = SweepDirection.Clockwise,
-                IsLargeArc = reflexangle
+                // First line segment from pt p1 - pt p2
+                new LineSegment() { Point = p2 },
 
-            });
+                //Arc drawn from pt p2 - pt p3 with the RangeIndicatorRadius 
+                new ArcSegment()
+                {
+                    Size = new Size(arcradius2, arcradius2),
+                    Point = p3,
+                    SweepDirection = SweepDirection.Clockwise,
+                    IsLargeArc = reflexangle
 
-            // Second line segment from pt p3 - pt p4
-            segments.Add(new LineSegment() { Point = p4 });
+                },
 
-            //Arc drawn from pt p4 - pt p1 with the Radius of arcradius1 
-            segments.Add(new ArcSegment()
-            {
-                Size = new Size(arcradius1, arcradius1),
-                Point = p1,
-                SweepDirection = SweepDirection.CounterClockwise,
-                IsLargeArc = reflexangle
+                // Second line segment from pt p3 - pt p4
+                new LineSegment() { Point = p4 },
 
-            });
+                //Arc drawn from pt p4 - pt p1 with the Radius of arcradius1 
+                new ArcSegment()
+                {
+                    Size = new Size(arcradius1, arcradius1),
+                    Point = p1,
+                    SweepDirection = SweepDirection.CounterClockwise,
+                    IsLargeArc = reflexangle
+
+                }
+            };
 
             // Defining the segment path properties
             Color rangestrokecolor;
@@ -1162,9 +1169,9 @@ namespace CircularGaugeControl
                 rangestrokecolor = clr;
             }
             else
+            {
                 rangestrokecolor = Colors.White;
-
-
+            }
 
             rangeIndicator = new Path()
             {
@@ -1191,7 +1198,7 @@ namespace CircularGaugeControl
             //Set Z index of range indicator
             rangeIndicator.SetValue(Canvas.ZIndexProperty, 150);
             // Adding the segment to the root grid 
-            rootGrid.Children.Add(rangeIndicator);
+            rootGrid?.Children.Add(rangeIndicator);
 
         }
 

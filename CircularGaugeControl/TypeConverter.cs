@@ -22,12 +22,11 @@ LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 DAMAGE.*/
 
 
-using System;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
-using Avalonia.Animation.Animators;
+using Avalonia.Data;
 
 namespace CircularGaugeControl
 {
@@ -38,23 +37,22 @@ namespace CircularGaugeControl
     public class ColorToSolidColorBrushConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            Color c = (Color)value;
-
-            return new SolidColorBrush(c);
+            if (value == null) return BindingNotification.UnsetValue;
+            return new SolidColorBrush((Color)value);
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -65,24 +63,27 @@ namespace CircularGaugeControl
     public class ImageOffsetConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double dblVal = (double)value;
-            TranslateTransform tt = new TranslateTransform();
-            tt.Y = dblVal;
+            var tt = new TranslateTransform
+            {
+                Y = dblVal
+            };
             return tt;
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -93,23 +94,27 @@ namespace CircularGaugeControl
     public class RadiusToDiameterConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double dblVal = (double)value;
 
-            return (dblVal * 2);
+            return dblVal * 2;
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            if (value == null) return BindingNotification.UnsetValue;
+            double dblVal = (double)value;
+
+            return dblVal / 2;
         }
     }
 
@@ -119,17 +124,19 @@ namespace CircularGaugeControl
     public class PointerCenterConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double dblVal = (double)value;
-            TransformGroup tg = new TransformGroup();
-            RotateTransform rt = new RotateTransform();
-            TranslateTransform tt = new TranslateTransform();
-
-            tt.X = dblVal / 2;
+            var tg = new TransformGroup();
+            var rt = new RotateTransform();
+            var tt = new TranslateTransform
+            {
+                X = dblVal / 2
+            };
             tg.Children.Add(rt);
             tg.Children.Add(tt);
 
@@ -137,12 +144,12 @@ namespace CircularGaugeControl
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -152,17 +159,19 @@ namespace CircularGaugeControl
     public class RangeIndicatorLightPositionConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double dblVal = (double)value;
-            TransformGroup tg = new TransformGroup();
-            RotateTransform rt = new RotateTransform();
-            TranslateTransform tt = new TranslateTransform();
-
-            tt.Y = dblVal;
+            var tg = new TransformGroup();
+            var rt = new RotateTransform();
+            var tt = new TranslateTransform
+            {
+                Y = dblVal
+            };
             tg.Children.Add(rt);
             tg.Children.Add(tt);
 
@@ -170,12 +179,12 @@ namespace CircularGaugeControl
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -185,18 +194,19 @@ namespace CircularGaugeControl
     public class SizeConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double i = 0;
             Size s = (Size)value;
-            if (parameter.ToString() == "Height")
+            if (parameter?.ToString() == "Height")
             {
                 i = s.Height;
             }
-            else if (parameter.ToString() == "Width")
+            else if (parameter?.ToString() == "Width")
             {
                 i = s.Width;
             }
@@ -206,12 +216,12 @@ namespace CircularGaugeControl
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -221,23 +231,24 @@ namespace CircularGaugeControl
     public class GlassEffectWidthConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             double dbl = (double)value;
-            return (dbl * 2) * 0.94;
+            return dbl * 2 * 0.94;
 
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 
@@ -247,18 +258,23 @@ namespace CircularGaugeControl
     public class BackgroundColorConverter : IValueConverter
     {
         public object Convert(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
+            if (value == null) return BindingNotification.UnsetValue;
             Color c = (Color)value;
-            RadialGradientBrush radBrush = new RadialGradientBrush();
-            GradientStop g1 = new GradientStop();
-            g1.Color = Color.FromArgb(0xFF, 0xAF, 0xB2, 0xB0);
-            GradientStop g2 = new GradientStop();
-            g2.Offset = 0.982;
-            g2.Color = c;
+            var radBrush = new RadialGradientBrush();
+            var g1 = new GradientStop
+            {
+                Color = Color.FromArgb(0xFF, 0xAF, 0xB2, 0xB0)
+            };
+            var g2 = new GradientStop
+            {
+                Offset = 0.982,
+                Color = c
+            };
             radBrush.GradientStops.Add(g1);
             radBrush.GradientStops.Add(g2);
             return radBrush;
@@ -266,12 +282,12 @@ namespace CircularGaugeControl
         }
 
         public object ConvertBack(
-            object value,
+            object? value,
             Type targetType,
-            object parameter,
+            object? parameter,
             CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return BindingNotification.UnsetValue;
         }
     }
 }

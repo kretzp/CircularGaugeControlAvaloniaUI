@@ -9,46 +9,48 @@ namespace CircularGaugeControl.Views
     public partial class MainView : UserControl
     {
         //Private variables
-        DispatcherTimer timer;
-        Game game1;
-        Game game2;
-        Game game3;
-        Game game4;
+        DispatcherTimer? timer;
+        readonly Game game1;
+        readonly Game game2;
+        readonly Game game3;
+        readonly Game game4;
 
         public MainView()
         {
             InitializeComponent();
+            //Set the current value of the gauges
+            game1 = new Game(0);
+            myGauge1.DataContext = game1;
+            game2 = new Game(0);
+            myGauge2.DataContext = game2;
+            game3 = new Game(0);
+            myGauge3.DataContext = game3;
+            game4 = new Game(0);
+            myGauge4.DataContext = game4;
+
             Loaded += MainView_Loaded;
         }
 
         private void MainView_Loaded(object? sender, RoutedEventArgs e)
         {
-            //Set the current value of the gauges
-            game1 = new Game(0);
-            this.myGauge1.DataContext = game1;
-            game2 = new Game(0);
-            this.myGauge2.DataContext = game2;
-            game3 = new Game(0);
-            this.myGauge3.DataContext = game3;
-            game4 = new Game(0);
-            this.myGauge4.DataContext = game4;
-
             //Start the timer
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(2500);
-            timer.Tick += new EventHandler(timer_Tick);
+            timer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(2500)
+            };
+            timer.Tick += new EventHandler(Timer_Tick);
             timer.Start();
         }
 
-        void timer_Tick(object sender, EventArgs e)
+        void Timer_Tick(object? sender, EventArgs e)
         {
             //Update random scores
-            Random r = new Random();
+            var r = new Random();
             game1.Score = r.Next(0, 1000);
             double val = r.Next(1, 10);
             game2.Score = val / 10;
             game3.Score = r.Next(-50, 50);
-            game4.Score = r.Next(0, 1000);
+            game4.Score = r.Next(50, 90)/10d;
         }
     }
 
@@ -66,23 +68,20 @@ namespace CircularGaugeControl.Views
             set
             {
                 score = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("Score"));
-                }
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Score)));
             }
         }
 
 
         public Game(double scr)
         {
-            this.Score = scr;
+            Score = scr;
         }
 
 
         #region INotifyPropertyChanged Members
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         #endregion
     }

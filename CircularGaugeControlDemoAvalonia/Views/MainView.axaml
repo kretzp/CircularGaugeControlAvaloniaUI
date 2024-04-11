@@ -69,9 +69,7 @@
                                         DialText="Black"
                                         DialTextColor="Black"
 										EasingValue="QuadraticEaseIn"
-                                        >
-
-			</gauge:CircularGaugeControl>
+                                        />
 
 			<!--Blue Gauge -->
 			<gauge:CircularGaugeControl x:Name="myGauge2"  Grid.Column="1" Grid.Row="0"
@@ -131,8 +129,8 @@
                                         ImageSize="40,50"
                                         RangeIndicatorThickness="0"
                                         RangeIndicatorRadius="0"
-                                        RangeIndicatorLightRadius="10"
-                                        RangeIndicatorLightOffset="80"
+                                        RangeIndicatorLightRadius="0"
+                                        RangeIndicatorLightOffset="0"
                                         ScaleLabelRadius="110"
                                         ScaleLabelSize="40,20"
                                         ScaleLabelFontSize="10"
@@ -159,15 +157,17 @@
                                         ScaleSweepAngle="300"
                                         PointerLength="85"
                                         PointerCapRadius="35"
-                                        MinValue="0"
-                                        MaxValue="1000"
-                                        MajorDivisionsCount="10"
+                                        MinValue="5"
+                                        MaxValue="9"
+                                        MajorDivisionsCount="8"
                                         MinorDivisionsCount="5"
                                         CurrentValue="{Binding Score}"
                                         ImageSource="/Assets/windowsLogo.png"
                                         ImageSize="40,50"
-                                        RangeIndicatorThickness="0"
-                                        RangeIndicatorRadius="0"
+                                        RangeIndicatorThickness="5"
+                                        RangeIndicatorRadius="70"
+										RangeIndicatorLightRadius="10"
+                                        RangeIndicatorLightOffset="80"
                                         ScaleLabelRadius="90"
                                         ScaleLabelSize="40,20"
                                         ScaleLabelFontSize="11"
@@ -179,18 +179,17 @@
                                         ImageOffset="-50"
                                         GaugeBackgroundColor="DarkSlateGray"
                                         PointerThickness ="12"
-                                        OptimalRangeStartValue="300"
-                                        OptimalRangeEndValue="700"
+                                        OptimalRangeStartValue="6"
+                                        OptimalRangeEndValue="8"
+										BelowOptimalRangeColor="Red"
+										OptimalRangeColor="LightGreen"
+										AboveOptimalRangeColor="Yellow"
                                         DialTextOffset="40"
-                                        DialText="Slate Gray"
+                                        DialText="{Binding Score, StringFormat='#0.0'}"
                                         DialTextColor="DarkSlateGray"
 										EasingValue="LinearEasing"
-                                        >
-
-
-			</gauge:CircularGaugeControl>
-
-
+										OuterFrameStrokeThickness="10"
+										/>
 		</Grid>
 	</Grid>
 </UserControl>

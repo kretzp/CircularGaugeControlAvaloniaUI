@@ -36,7 +36,7 @@
 					  Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}" >
 
 
-					<Ellipse x:Name="OuterFrame" StrokeThickness="16"
+					<Ellipse x:Name="OuterFrame" StrokeThickness="{TemplateBinding OuterFrameStrokeThickness}"
 							 Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}"
 							 Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Radius, Converter={StaticResource radiusToDiameterConverter}}"
 							 Fill="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=GaugeBackgroundColor, Converter={StaticResource backgroundColorConverter}}">
